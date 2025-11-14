@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>分野パターン</title>
+  <style>
+    body {
+      font-family: "FOT-TsukuARdGothic Std", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 40px;
+    }
+
+    /* 左右に並べる全体コンテナ */
+    .main-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 40px; /* 左右の余白 */
+    }
+
+    .left-block .page-title:first-of-type {
+      margin-top: 200px;  /*調整*/
+    }
+
+    .right-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* タイトル */
+    .page-title {
+      font-size: 60px;          /* 60px文字 */
+      text-align: center;       /* 画面中央揃え */
+      margin: 0 0 30px;         /*余白 */
+      line-height: 1.1;
+    }
+
+    .slider-container {
+      width: 900px;
+      margin-bottom: 16px;       /* スライダーと目盛りの間 */
+    }
+
+    #imageSlider {
+      width: 100%;
+      -webkit-appearance: none;  /* デフォルトの見た目を消す（Safari/Chrome） */
+      appearance: none;
+      height: 50px;              /* トラックの縦幅 */
+      border-radius: 25px;
+      background: #ddd;
+      outline: none;
+    }
+
+    /* トラック＆つまみ */
+    #imageSlider::-webkit-slider-runnable-track {
+      height: 24px;
+      border-radius: 20px;
+      background: #ddd;
+    }
+
+    #imageSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 50px;              /* つまみのサイズ */
+      height: 50px;
+      border-radius: 100%;
+      background: #333;
+      cursor: pointer;
+      margin-top: -13px;         /* トラック中央にくるよう微調整 */
+    }
+
+    .slider-labels {
+      width: 900px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 30px;
+      margin-bottom: 150px;      /* スライダー＋目盛り と 下のタイトルの間 */
+    }
+
+    .image-wrapper {
+      width: 900px;
+      height: 900px;            /* 900pxの正方形 */
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f5f5f5;
+    }
+
+    #mainImage {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;        /* 画像を枠いっぱいに表示（トリミングあり） */
+    }
+
+    /* 「次へ」ボタン */
+    .next-button {
+      margin-top: 12px;
+      padding: 8px 32px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .placeholder-info {
+      width: 900px;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+
+    .placeholder-info span {
+      color: red;               /* 仮データ部分を赤字に */
+      font-weight: bold;
+    }
+   /* ここから下を style の一番最後に追加 */
+
+   /* 画面幅が 768px 以下（スマホくらい）のときのレイアウト調整 */
+   @media (max-width: 768px) {
+   body {
+    margin: 16px;              /* 40px だとスマホでは広すぎるので少し狭く */
+  }
+
+   .main-row {
+    flex-direction: column;    /* 横並び → 縦並び */
+    gap: 24px;                 /* 上下の間隔を少し詰める */
+  }
+
+  /* 最初のタイトルが下に行きすぎないように調整 */
+  .left-block .page-title:first-of-type {
+    margin-top: 40px;
+  }
+
+  /* スライダー／ラベル／画像の幅をスマホ幅に合わせる */
+  .slider-container,
+  .slider-labels,
+  .image-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .image-wrapper {
+    height: auto;              /* 高さ固定900px → 中身に合わせる */
+    aspect-ratio: 1 / 1;       /* 正方形っぽさは維持したい場合 */
+  }
+
+  /* 文字が大きすぎると収まらないので、少しだけ小さくする例 */
+  .page-title {
+    font-size: 32px;
+  }
+
+  .slider-labels {
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+}
+  </style>
+</head>
+<body>
+
+  <!-- ここから左右2カラム -->
+  <div class="main-row">
+
+    <!-- 左側：タイトル＋スライダー類 -->
+    <div class="left-block">
+      <!-- タイトル（上） -->
+      <h1 class="page-title" id="headingTop">今あるもの</h1>
+
+      <!-- スライダー -->
+      <div class="slider-container">
+        <label for="imageSlider"></label>
+        <input type="range" id="imageSlider" min="1" max="3" step="1" value="1">
+      </div>
+
+      <!-- スライダーの目盛りラベル -->
+      <div class="slider-labels">
+        <span id="labelLeft">を改良する</span>
+        <span id="labelCenter"> </span>
+        <span id="labelRight">にはない発明をする</span>
+      </div>
+
+      <!-- タイトル（下） -->
+      <h1 class="page-title" id="headingBottom"></h1>
+    </div>
+
+    <!-- 右側：画像エリア -->
+    <div class="right-block">
+      <!-- 900px x 900px の画像表示エリア -->
+      <div class="image-wrapper">
+        <img id="mainImage" src="images/1.png" alt="表示画像">
+      </div>
+
+      <!-- 「次へ」ボタン -->
+      <button id="nextButton" class="next-button">次へ</button>
+    </div>
+  </div><!-- /.main-row -->
+
+  <script>
+    const slider        = document.getElementById('imageSlider');
+    const mainImage     = document.getElementById('mainImage');
+    const headingTop    = document.getElementById('headingTop');
+    const headingBottom = document.getElementById('headingBottom');
+    const labelLeft     = document.getElementById('labelLeft');
+    const labelCenter   = document.getElementById('labelCenter');
+    const labelRight    = document.getElementById('labelRight');
+    const nextButton    = document.getElementById('nextButton');
+
+    // 「見出し」と「スライダー文字」をステップごとに定義
+    const steps = [
+      {
+        headingTop:    '今あるもの',
+        headingBottom: '　',
+        labels: ['を改良する', '　', 'にはない発明をする']
+      },
+      {
+        headingTop:    'この分野では',
+        headingBottom: 'について向き合う',
+        labels: ['特定のもの', '　', '社会/環境の関係性']
+      },
+      {
+        headingTop:    'この分野では',
+        headingBottom: 'が重要',
+        labels: ['ひらめき、アイデア', '　', '論理']
+      },
+      {
+        headingTop:    'この分野では、',
+        headingBottom: 'に注目する',
+        labels: ['形になるまでのプロセス', '　', '完成物と使われ方']
+      }
+    ];
+
+    let stepIndex = 0; // 今どのステップか（0〜3）
+
+    // 見出しとスライダーラベルを更新
+    function updateTexts() {
+      const step = steps[stepIndex];
+      headingTop.textContent    = step.headingTop;
+      headingBottom.textContent = step.headingBottom;
+      labelLeft.textContent     = step.labels[0];
+      labelCenter.textContent   = step.labels[1];
+      labelRight.textContent    = step.labels[2];
+    }
+
+    // 4ステップぶんの文字セット（画像ファイル名生成用）
+    const nameSets = [
+      ['1', '2', '3'],      // 1文字目
+      ['A', 'B', 'C'],      // 2文字目
+      ['あ', 'い', 'う'],   // 3文字目
+      ['4', '5', '6']       // 4文字目
+    ];
+
+    const maxDepth = 4;     // 最大「次へ」4回まで
+    let path = "";          // 確定した選択履歴（"1", "13", "231" みたいな文字列）
+
+    // パス（"1", "13", "231" など）からファイル名を作る
+    // 例: path="1321" → "1Cあ5.png"
+    function fileNameFromPath(pathStr) {
+      let name = "";
+
+      for (let i = 0; i < pathStr.length; i++) {
+        const choice = Number(pathStr[i]) - 1; // 0,1,2 に変換
+        const set = nameSets[i];               // 何文字目かで使うセット
+        if (!set || choice < 0 || choice >= set.length) return "";
+        name += set[choice];
+      }
+
+      return name + ".png";
+    }
+
+    // スライダーの位置と履歴から画像を決める
+    function updateImageBySlider() {
+      let effectivePath;
+
+      if (path.length === 0) {
+        // まだ一度も「次へ」を押していない → 1文字だけ（1.png〜3.png）
+        effectivePath = String(slider.value);
+      } else if (path.length < maxDepth) {
+        // これまでの履歴＋今回の選択
+        effectivePath = path + String(slider.value);
+      } else {
+        // もう最大まで到達している場合は確定済みパスだけ
+        effectivePath = path;
+      }
+
+      const fileName = fileNameFromPath(effectivePath);
+      if (fileName) {
+        mainImage.src = "images/" + fileName;
+      }
+    }
+
+    // スライダーを動かしたとき：常に画像を更新
+    slider.addEventListener("input", () => {
+      updateImageBySlider();
+    });
+
+    
+    // 「次へ」ボタン：
+　　// 1) 履歴に現在のスライダー位置を追加
+　　// 2) その回数に合わせてタイトル＆ラベルを更新
+　　// 3) 4段階目が終わったあとに「次へ」を押したら結果画面にする
+　　nextButton.addEventListener("click", () => {
+  　// ★すでに4段階目まで終わっている状態で「次へ」を押したとき
+  　if (path.length >= maxDepth) {
+    // 4段階目で決まった画像はそのままにして、メッセージだけ切り替える
+    headingTop.textContent    = 'あなたの考える〇〇分野は';
+    headingBottom.textContent = 'このかたち！';
+
+    // お好みで：スライダーのラベルを消す
+    labelLeft.textContent   = '';
+    labelCenter.textContent = '';
+    labelRight.textContent  = '';
+
+    // ★ここでスライダーとラベルを消す
+    slider.style.display      = 'none';
+    labelLeft.style.display   = 'none';
+    labelCenter.style.display = 'none';
+    labelRight.style.display  = 'none';
+
+    // お好みで：ボタンを無効化したり、文言を変えたり
+    // nextButton.disabled = true;
+    // nextButton.textContent = '結果';
+
+    return;
+  }
+
+  // ★ここから下は、1〜4段階目までの通常の処理
+  const choice = String(slider.value); // "1" / "2" / "3"
+  path += choice;                      // 履歴に追加
+
+  // 何回「次へ」したかに応じて stepIndex を更新（最大 steps.length-1 まで）
+  stepIndex = Math.min(path.length, steps.length - 1);
+  updateTexts();         // タイトルとスライダー文字を変更
+  updateImageBySlider(); // 画像もその状態に合わせて更新
+});
+
+
+    // 初期表示
+    slider.value = "1";
+    updateTexts();
+    updateImageBySlider();
+  </script>
+</body>
+</html>
